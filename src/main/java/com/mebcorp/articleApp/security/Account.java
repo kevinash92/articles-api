@@ -5,8 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import com.mebcorp.articleApp.entities.AbstractEntity;
 
 @Entity
