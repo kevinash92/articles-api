@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AppAccountDetailsService implements UserDetailsService {
+public class AccountDetailsService implements UserDetailsService {
 	@Autowired
 	private AccountDAO accountDAO;
 
@@ -20,7 +20,7 @@ public class AppAccountDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException(String.format("login [%s] inexistant", username));
 		}
 		// on rend les détails de l'utilsateur
-		return new AppAccountDetail(account, accountDAO);
+		return new AccountDetails(account, accountDAO);
 	}
 
 }

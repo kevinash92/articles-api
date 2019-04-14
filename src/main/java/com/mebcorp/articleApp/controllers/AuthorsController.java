@@ -5,6 +5,9 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,15 +33,18 @@ public class AuthorsController {
 		messages = application.getMessages();
 	}
 	
+	
+	
 	@GetMapping("/authors")
-	public Response getAllAuthors() {
+	public ResponseEntity<?> getAllAuthors() {
+    
 		if (messages != null) {
-			return new Response(-1, messages);
+			return new ResponseEntity<>(messages, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		try {
-			return new Response(0, application.getAllAuthors());
+			return new ResponseEntity<>(new Response(0,application.getAllAuthors()), HttpStatus.OK);
 		} catch (Exception e) {
-			return new Response(1, Static.getErreursForException(e));
+			return new ResponseEntity<>(Static.getErreursForException(e), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
@@ -137,6 +143,7 @@ public class AuthorsController {
 	}
 	
 	@PostMapping("/author/{id}/delete")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public Response deleteAuthor(@PathVariable Long id) {
 		if (messages != null) {
 			return new Response(-1, messages);
@@ -182,6 +189,7 @@ public class AuthorsController {
 	}
 	
 	@PostMapping("/article/{id}/delete")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public Response deleteArticle(@PathVariable Long id) {
 		if (messages != null) {
 			return new Response(-1, messages);

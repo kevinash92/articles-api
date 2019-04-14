@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class AppAccountDetail implements UserDetails {
+public class AccountDetails implements UserDetails {
 	
 	
 	private static final long serialVersionUID = 1L;
@@ -15,11 +15,11 @@ public class AppAccountDetail implements UserDetails {
 	private Account account;
 	private AccountDAO accountDAO;
 	
-	public AppAccountDetail() {
+	public AccountDetails() {
 	}
 	
 	
-	public AppAccountDetail(Account account, AccountDAO accountDAO) {
+	public AccountDetails(Account account, AccountDAO accountDAO) {
 		super();
 		this.account = account;
 		this.accountDAO = accountDAO;

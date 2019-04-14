@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
+import com.mebcorp.articleApp.security.AccountDetailsService;
+
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
@@ -24,13 +26,13 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	
 	@Autowired
 	private TokenStore tokenStore;
-	
 	@Autowired
 	private UserApprovalHandler userApprovalHandler;
- 
 	@Autowired
 	@Qualifier("authenticationManagerBean")
 	private AuthenticationManager authenticationManager;
+	@Autowired
+	private AccountDetailsService accountDetailsService;
 	
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -38,7 +40,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	    .withClient("crmClient1")
             .secret(new BCryptPasswordEncoder().encode("crmSuperSecret"))
             .authorizedGrantTypes("password", "refresh_token")
-            .authorities("ROLE_CLIENT", "ROLE_TRUSTED_CLIENT")
+            .authorities("ROLE_ADMIN", "ROLE_TRUSTED_CLIENT")
             .scopes("read", "write", "trust")
             //.accessTokenValiditySeconds(ONE_DAY)
             .accessTokenValiditySeconds(5*ONE_MIN)
@@ -48,7 +50,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		endpoints.tokenStore(tokenStore).userApprovalHandler(userApprovalHandler)
-		.authenticationManager(authenticationManager);
+		.authenticationManager(authenticationManager)
+		.userDetailsService(accountDetailsService);
 	}
  
 	@Override

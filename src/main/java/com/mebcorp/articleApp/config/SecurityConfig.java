@@ -23,13 +23,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.mebcorp.articleApp.security.AppAccountDetailsService;
+import com.mebcorp.articleApp.security.AccountDetailsService;
 
 @EnableAutoConfiguration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
-	private AppAccountDetailsService appAccoutDetailsService;
+	private AccountDetailsService appAccoutDetailsService;
 	@Autowired
 	private ClientDetailsService clientDetailsService;
 
@@ -53,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests() //
 		.antMatchers("/signup").permitAll()
 		.antMatchers("/api", "/api/**") // toutes les URL
-		.access("hasRole('ADMIN')")
+		.access("hasRole('ADMIN') or hasRole('USER')")
 		.anyRequest().authenticated();
 		
 	}
