@@ -32,6 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private AccountDetailsService appAccoutDetailsService;
 	@Autowired
 	private ClientDetailsService clientDetailsService;
+//	@Autowired 
+//	private DataSource dataSource;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder registry) throws Exception {
@@ -44,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	protected void configure(HttpSecurity http) throws Exception {
+		
 		// CSRF
 		http.csrf().disable();
 		// le mot de passe est transmis par le header Authorization: Basic xxxx
@@ -73,6 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public TokenStore tokenStore() {
 		return new InMemoryTokenStore();
+//		return new JdbcTokenStore(dataSource);
 	}
 
 	@Bean

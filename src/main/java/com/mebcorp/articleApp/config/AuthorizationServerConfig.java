@@ -1,5 +1,7 @@
 package com.mebcorp.articleApp.config;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -33,29 +35,51 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	private AuthenticationManager authenticationManager;
 	@Autowired
 	private AccountDetailsService accountDetailsService;
+	@Autowired
+	private DataSource dataSource;
 	
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-	    clients.inMemory()
-	    .withClient("crmClient1")
-            .secret(new BCryptPasswordEncoder().encode("crmSuperSecret"))
-            .authorizedGrantTypes("password", "refresh_token")
-            .authorities("ROLE_ADMIN", "ROLE_TRUSTED_CLIENT")
-            .scopes("read", "write", "trust")
-            //.accessTokenValiditySeconds(ONE_DAY)
-            .accessTokenValiditySeconds(5*ONE_MIN)
-            .refreshTokenValiditySeconds(THIRTY_DAYS);
+//	    clients.inMemory()
+//	    .withClient("crmClient1")
+//            .secret(new BCryptPasswordEncoder().encode("crmSuperSecret"))
+//            .authorizedGrantTypes("password", "refresh_token")
+//            .authorities("ROLE_ADMIN", "ROLE_TRUSTED_CLIENT")
+//            .scopes("read", "write", "trust")
+//            //.accessTokenValiditySeconds(ONE_DAY)
+//            .accessTokenValiditySeconds(5*ONE_MIN)
+//            .refreshTokenValiditySeconds(THIRTY_DAYS);
+		
+//		clients.withClientDetails(new ClientDetailsService() {
+//			
+//			@Override
+//			public ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
+//				BaseClientDetails client = new BaseClientDetails();
+//				client.setClientId("crmClient1");
+//				client.setClientSecret(new BCryptPasswordEncoder().encode("crmSuperSecret"));
+//				client.setAuthorizedGrantTypes(Lists.newArrayList("password", "refresh_token"));
+//				client.setScope(Lists.newArrayList("read", "write", "trust"));
+//				client.setAccessTokenValiditySeconds(300);
+//				client.setRefreshTokenValiditySeconds(THIRTY_DAYS);
+//				return client;
+//			}
+//		});
+		
+		clients.jdbc(dataSource);
+		
 	}
  
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		endpoints.tokenStore(tokenStore).userApprovalHandler(userApprovalHandler)
+		endpoints.tokenStore(tokenStore)
+		.userApprovalHandler(userApprovalHandler)
 		.authenticationManager(authenticationManager)
 		.userDetailsService(accountDetailsService);
 	}
  
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+		oauthServer.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()").passwordEncoder(new BCryptPasswordEncoder());
 		oauthServer.realm(REALM);
 	}
 	
